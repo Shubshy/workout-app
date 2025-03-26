@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Tracker</title>
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Workout Tracker</h1>
+        
+        <!-- Weekly Program -->
+        <div class="card">
+            <h2>Weekly Program</h2>
+            <form action="/update_program" method="POST">
+                {% for day, workout in program.items() %}
+                <div class="form-group">
+                    <label>{{ day }}</label>
+                    <input type="text" name="{{ day }}" value="{{ workout }}">
+                </div>
+                {% endfor %}
+                <button type="submit">Update Program</button>
+            </form>
+        </div>
+
+        <!-- Add Workout -->
+        <div class="card">
+            <h2>Log Workout</h2>
+            <form action="/add" method="POST">
+                <input type="text" name="name" placeholder="Exercise" required>
+                <input type="number" name="weight" placeholder="Weight (kg)">
+                <input type="number" name="sets" placeholder="Sets" required>
+                <input type="number" name="reps" placeholder="Reps" required>
+                <textarea name="notes" placeholder="Notes"></textarea>
+                <button type="submit">Save Workout</button>
+            </form>
+        </div>
+
+        <!-- Search Workouts -->
+        <div class="card">
+            <h2>Search Workouts</h2>
+            <form action="/search" method="POST">
+                <input type="date" name="search_date" required>
+                <button type="submit">Search</button>
+                {% if search_date %}
+                <a href="/" class="button">Clear Search</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Workout List -->
+        <div class="card">
+            <h2>
+                {% if search_date %}
+                Workouts on {{ search_date }}
+                {% else %}
+                Recent Workouts
+                {% endif %}
+            </h2>
+            
+            {% if workouts %}
+            <div class="workout-list">
+                {% for workout in workouts %}
+                <div class="workout-item">
+                    <h3>{{ workout.name }} <span>{{ workout.weight }}kg</span></h3>
+                    <p>{{ workout.sets }} sets × {{ workout.reps }} reps</p>
+                    {% if workout.notes %}<p class="notes">{{ workout.notes }}</p>{% endif %}
+                    <small>{{ workout.date }}</small>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No workouts found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
